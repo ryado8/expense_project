@@ -1,12 +1,5 @@
 "use strict";
 
-/*
-- Represents a single expense record.
-- The date cannot be in the future.
-- The amount must be a positive number.
-- The category must be a non-empty string.
-- Expense objects are immutable once created.
-*/
 
 class Expense {
   #id;
@@ -15,15 +8,30 @@ class Expense {
   #category;
 
   constructor(id, amount, date, category) {
+    if (amount <= 0) {
+      throw new Error("Amount must be a positive number.");
+    }
+
+    const parsedDate = new Date(date);
+    if (parsedDate > new Date()) {
+      throw new Error("Date cannot be in the future.");
+    }
+
+    const trimmedCategory = category.trim();
+    if (trimmedCategory === '') {
+      throw new Error("Category must be non-empty string.");
+    }
+
     this.#id = id;
     this.#amount = amount;
-    this.#date = new Date(date);
-    this.#category = category;
+    this.#date = parsedDate;
+    this.#category = trimmedCategory;
+    Object.freeze(this);
   }
 
   get id() { return this.#id }
   get amount() { return this.#amount }
-  get date() { return this.#date }
+  get date() { return new Date(this.#date) }
   get category() { return this.#category }
 }
 
