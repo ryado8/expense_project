@@ -1,10 +1,3 @@
-## Expense
-- Represents a single expense record.
-- Has an id, amount, date, and category.
-- The date cannot be in the future.
-- The amount must be a positive number.
-- The category must be a non-empty string.
-- Expense objects are immutable once created.
 
 ## ExpenseManager
 - Manages a collection of Expense objects.

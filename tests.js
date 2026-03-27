@@ -1,4 +1,4 @@
-import { Expense } from './expense_project.js';
+import { Expense, ExpenseManager } from './expense_project.js';
 
 function pass(msg) {
   console.log('\x1b[32m  PASS:\x1b[0m ' + msg);
@@ -74,3 +74,79 @@ try {
 } catch (_) {
   pass('cannot add properties once expense has been created');
 }
+
+console.log('\n=== PART 2: EXPENSE MANAGER (BASIC) ===\n');
+
+// - Manages a collection of Expense objects.
+try {
+  console.log('- Manages a collection of Expense objects.');
+  const manager = new ExpenseManager();
+  assert(manager.expenses.length === 0, 'expenses shoud be empty');
+  manager.addExpense({ amount: 100, date: '2025-11-06', category: 'food' });
+  assert(manager.expenses.length === 1, 'expenses should have length of 1');
+  pass('maintains a list of Expense objects');
+} catch (error) { fail(error.message) }
+
+// - Add a new expense.
+try {
+  console.log('- Add a new expense.');
+  const manager = new ExpenseManager();
+  manager.addExpense({ amount: 100, date: '2025-11-06', category: 'food' });
+  assert(manager.expenses[0].amount === 100, 'amount should be 100');
+  assert(manager.expenses[0].date.getTime() === new Date('2025-11-06').getTime(), 'date should be 2025-11-06');
+  assert(manager.expenses[0].category === 'food', 'category should be food');
+  pass('adds a new expense');
+} catch (error) { fail(error.message) }
+
+// - Remove an expense by id.
+try {
+  console.log('- Remove an expense by id.');
+  const manager = new ExpenseManager();
+  manager.addExpense({ amount: 100, date: '2025-11-06', category: 'food' });
+  assert(manager.expenses.length === 1, 'expenses should have length of 1');
+  manager.removeExpenseById(1);
+  assert(manager.expenses.length === 0, 'expenses shoud be empty');
+  pass('removes an expense by id');
+} catch (error) { fail(error.message) }
+
+// - Retrieve the current list of allowed categories.
+try {
+  console.log('- Retrieve the current list of allowed categories.');
+  const manager = new ExpenseManager();
+  const initialCategories = manager.getCategories();
+  assert(initialCategories.length === 5);
+  assert(initialCategories.includes('food'), 'food should be in categories');
+  assert(initialCategories.includes('housing'), 'housing should be in categories');
+  assert(initialCategories.includes('transportation'), 'transportation should be in categories');
+  assert(initialCategories.includes('entertainment'), 'entertainment should be in categories');
+  assert(initialCategories.includes('health'), 'health should be in categories');
+  pass('Initial categories are food, housing, transportation, entertainment, and health');
+} catch (error) { fail(error.message) }
+
+// - Allows known categories
+try {
+  console.log('- Allows known categories.');
+  const manager = new ExpenseManager();
+  manager.addExpense({ amount: 100, date: '2025-11-06', category: 'food' });
+  assert(manager.expenses.length === 1, 'expenses should have length of 1');
+  pass('Allows known categories');
+} catch (error) { fail(error.message) }
+
+// - Disallows unknown categories
+try {
+  console.log("- Disallows unknown categories.");
+  const manager = new ExpenseManager();
+  manager.addExpense({ amount: 100, date: '2025-11-06', category: 'test' });
+  fail('should throw error when trying to add expense with an unknown category');
+} catch (_) {
+  pass('cannot add expenses with an unknown category');
+}
+
+// - Add a new allowed category.
+try {
+  console.log('- Allows known categories.');
+  const manager = new ExpenseManager();
+  manager.addCategory('eating out');
+  manager.addExpense({ amount: 100, date: '2025-11-06', category: 'eating out' });
+  pass("Allows adding new categories");
+} catch (error) { fail(error.message) }
