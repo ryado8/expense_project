@@ -1,19 +1,3 @@
-
-## ExpenseManager
-- Manages a collection of Expense objects.
-- Supports operations to:
-    Add a new expense.
-    Remove an expense by id.
-    Add a new allowed category.
-    Retrieve the current list of allowed categories.
-- Instances should start with a default set of allowed categories:
-- Food, Housing, Transportation, Entertainment, and Health.
-- Enforces that all expenses belong to an allowed category.
-
-    - Summarize expenses (total spent, average amount, and count).
-    - Filter expenses by a date range.
-    - Filter expenses by category.
-
 ## BudgetExpenseManager
 - Provides similar behavior to ExpenseManager but includes a budget limit.
 - Prevents adding expenses that would cause the total to exceed the budget.

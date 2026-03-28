@@ -93,11 +93,70 @@ class ExpenseManager {
     this.#categories.add(category);
   }
 
+  summarizeExpenses() {
+    const total = this._getTotalExpenses();
+    const count = this.#expenses.length;
+    const average = count ? total / count : 0;
+    return { total, count, average };
+  }
+
+  filterExpensesByCategory(category) {
+    category = category.trim().toLowerCase();
+    return this.#expenses.filter(expense => expense.category === category);
+  }
+
+  filterExpensesByDateRange(startDate, endDate) {
+    return this.#expenses.filter(expense =>
+      expense.date >= new Date(startDate) && expense.date <= new Date(endDate)
+    );
+  }
+
   #generateId() {
     const id = this.#nextId;
     this.#nextId++;
     return id;
   }
+
+  _getTotalExpenses() {
+    return this.#expenses.reduce((sum, exp) => sum + exp.amount, 0);
+  }
 }
 
-export { Expense, ExpenseManager };
+class BudgetExpenseManager extends ExpenseManager {
+  #budgetLimit;
+
+  constructor(budgetLimit) {
+    if (typeof budgetLimit !== 'number' || budgetLimit <= 0) {
+      throw new Error("Budget limit must a positive number.");
+    }
+    super();
+
+    this.#budgetLimit = budgetLimit;
+  }
+
+  addExpense(expenseData) {
+    if (expenseData.amount > this.remainingBudget()) {
+      throw new Error(`Failed to add expense (Amount: ${expenseData.amount}) Exceeds budget limit of ${this.#budgetLimit})`);
+    }
+
+    super.addExpense(expenseData);
+  }
+
+  summarizeExpenses() {
+    const baseSummary = super.summarizeExpenses();
+    const remaining = this.remainingBudget();
+
+    return {
+      ...baseSummary,
+      budgetLimit: this.#budgetLimit,
+      remainingBudget: remaining,
+    };
+  }
+
+  remainingBudget() {
+    return this.#budgetLimit - this._getTotalExpenses();
+  }
+}
+
+export { Expense, ExpenseManager, BudgetExpenseManager };
+
